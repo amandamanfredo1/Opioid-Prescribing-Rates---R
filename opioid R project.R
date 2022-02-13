@@ -99,6 +99,7 @@ cdcdeaths=left_join(cdcdeaths,populations,  by=c('state','Year'))
 cdcdeaths=cdcdeaths%>%select(-State)
 cdcdeaths=cdcdeaths%>%mutate(Percent_deaths=(Overdose.Deaths/Population)*100)
 
+
 #---------------------------------------------------
 
 #gonna attempt to join medicaid and opioiddeaths dataframes. wish me luck
@@ -177,6 +178,12 @@ plot_usmap(data = master2013, values = "Opioid_Prscrbng_Rate", color = "black") 
 
 ##omg it workedddddddddddddd ahhhh
 
+master2014=masterchart%>%filter(Year==2014)
+plot_usmap(data = master2014, values = "Opioid_Prscrbng_Rate", color = "black") + 
+  scale_fill_continuous(
+    low = "white", high = "red", name = "Opioid Prescribing Rate", label = scales::comma, limits=c(1,12)
+  ) + theme(legend.position = "right")+
+  labs(title = "Opioid Prescribing Rate by State", subtitle = "Year: 2014")
 #year2015
 master2015=masterchart%>%filter(Year==2015)
 plot_usmap(data = master2015, values = "Opioid_Prscrbng_Rate", color = "black") + 
@@ -185,6 +192,13 @@ plot_usmap(data = master2015, values = "Opioid_Prscrbng_Rate", color = "black") 
   ) + theme(legend.position = "right")+
   labs(title = "Opioid Prescribing Rate by State", subtitle = "Year: 2015")
 
+#year 2016
+master2016=masterchart%>%filter(Year==2016)
+plot_usmap(data = master2016, values = "Opioid_Prscrbng_Rate", color = "black") + 
+  scale_fill_continuous(
+    low = "white", high = "red", name = "Opioid Prescribing Rate", label = scales::comma, limits=c(1,12)
+  ) + theme(legend.position = "right")+
+  labs(title = "Opioid Prescribing Rate by State", subtitle = "Year: 2016")
 
 #year2017
 master2017=masterchart%>%filter(Year==2017)
@@ -194,6 +208,13 @@ plot_usmap(data = master2017, values = "Opioid_Prscrbng_Rate", color = "black") 
   ) + theme(legend.position = "right")+
   labs(title = "Opioid Prescribing Rate by State", subtitle = "Year: 2017")
 
+#year2018
+master2018=masterchart%>%filter(Year==2018)
+plot_usmap(data = master2018, values = "Opioid_Prscrbng_Rate", color = "black") + 
+  scale_fill_continuous(
+    low = "white", high = "red", name = "Opioid Prescribing Rate", label = scales::comma, limits=c(1,12)
+  ) + theme(legend.position = "right")+
+  labs(title = "Opioid Prescribing Rate by State", subtitle = "Year: 2018")
 #year2019
 
 master2019=masterchart%>%filter(Year==2019)
@@ -206,27 +227,43 @@ plot_usmap(data = master2019, values = "Opioid_Prscrbng_Rate", color = "black") 
 
 #ok so thats good for now-----------------------------------
 #lets see if i can compare to death rates from opioids
+cdcdeath1=cdcdeaths%>%filter(Year<2020)
+#make sure everything is actually numeric
+cdcdeath1$Year=as.numeric(cdcdeath1$Year)
+cdcdeath1$Percent_deaths=as.numeric((cdcdeath1$Percent_deaths))
 
 
 #year 2015
-cdc2015=cdcdeaths%>%filter(Year==2015)
+cdc2015=cdcdeath1%>%filter(Year==2015)
 plot_usmap(data = cdc2015, values = "Percent_deaths", color = "black") + 
   scale_fill_continuous(
     low = "white", high = "blue", name = "Percent Opioid Deaths", label = scales::comma, limits=c(0,.05)
   ) + theme(legend.position = "right")+
   labs(title = "Percent Opioid Deaths by State", subtitle = "Year: 2015")
-
+#year 2016
+cdc2016=cdcdeath1%>%filter(Year==2016)
+plot_usmap(data = cdc2016, values = "Percent_deaths", color = "black") + 
+  scale_fill_continuous(
+    low = "white", high = "blue", name = "Percent Opioid Deaths", label = scales::comma, limits=c(0,.05)
+  ) + theme(legend.position = "right")+
+  labs(title = "Percent Opioid Deaths by State", subtitle = "Year: 2016")
 
 #year2017
-cdc2017=cdcdeaths%>%filter(Year==2017)
+cdc2017=cdcdeath1%>%filter(Year==2017)
 plot_usmap(data = cdc2017, values = "Percent_deaths", color = "black") + 
   scale_fill_continuous(
     low = "white", high = "blue", name = "Percent Opioid Deaths", label = scales::comma, limits=c(0,.055)
   ) + theme(legend.position = "right")+
   labs(title = "Percent Opioid Deaths by State", subtitle = "Year: 2017")
-
+#year 2018
+cdc2018=cdcdeath1%>%filter(Year==2018)
+plot_usmap(data = cdc2018, values = "Percent_deaths", color = "black") + 
+  scale_fill_continuous(
+    low = "white", high = "blue", name = "Percent Opioid Deaths", label = scales::comma, limits=c(0,.05)
+  ) + theme(legend.position = "right")+
+  labs(title = "Percent Opioid Deaths by State", subtitle = "Year: 2018")
 #year2019
-cdc2019=cdcdeaths%>%filter(Year==2019)
+cdc2019=cdcdeath1%>%filter(Year==2019)
 plot_usmap(data = cdc2019, values = "Percent_deaths", color = "black") + 
   scale_fill_continuous(
     low = "white", high = "blue", name = "Percent Opioid Deaths", label = scales::comma, limits=c(0,.055)
@@ -234,11 +271,12 @@ plot_usmap(data = cdc2019, values = "Percent_deaths", color = "black") +
   labs(title = "Percent Opioid Deaths by State", subtitle = "Year: 2019")
 
 
+
 #animating the maps animatingggggggggggggg-------------------------
 #install.packages("gganimate")
 #install.packages("gifski")
 #install.packages("transformr")
-install.packages("gapminder")
+#install.packages("gapminder")
 library(gapminder)
 library(transformr)
 library(gganimate)
@@ -253,9 +291,68 @@ map_with_animation <- maprxrate +
   ggtitle('Year: {frame_time}',
           subtitle = 'Frame {frame} of {nframes}')
 num_years <- max(masterchart$Year) - min(masterchart$Year) + 1
-animate(map_with_animation, nframes = num_years)
+animate(map_with_animation, fps=1,renderer = gifski_renderer(), nframes = num_years)
 
 anim_save("maprxrate.gif")
+
+readr::write_rds(cdcdeath1, file = "./data/cdcdeath1.rds") 
+
+
+##try animating percent deaths--------------------------
+#to get rid of NA values for 2020
+cdcdeath1=cdcdeaths%>%filter(Year<2020)
+cdcdeath1$Year=as.integer(cdcdeath1$Year)
+cdcdeath1$Percent_deaths=as.numeric((cdcdeath1$Percent_deaths))
+
+mapodrate=plot_usmap(data = cdcdeath1, values = "Percent_deaths", color = "black") + 
+  scale_fill_continuous(
+    low = "white", high = "red", name = "Overdose Deaths by Population", label = scales::comma, limits=c(.00,.05)
+  ) + theme(legend.position = "right")
+
+map_with_animation1 <- mapodrate +
+  transition_time(Year) +
+  ggtitle('Year: {frame_time}',
+          subtitle = 'Frame {frame} of {nframes}')
+num_years1 <- max(cdcdeath1$Year) - min(cdcdeath1$Year) + 1
+animate(map_with_animation1,renderer = gifski_renderer(), nframes = num_years1)
+
+anim_save("maprodrate.gif")
+##this didnt work either but it looks like a party in the USA so leaving it for fun
+library(tidyverse)
+library(usmap)
+library(gganimate)
+library(remotes)
+remotes::install_github('thomasp85/gganimate')
+library(gifski)
+
+cdcdeath1 <- read_rds("/Users/rishi/Downloads/cdcdeath1.rds")
+
+cdcdeath1
+
+
+mapodrate=plot_usmap(data = cdcdeath1, values = "Percent_deaths", color = "black") +
+  scale_fill_continuous(
+    low = "white", high = "red", name = "Overdose Deaths by Population", label = scales::comma, limits=c(.00,.06)
+  ) + theme(legend.position = "right")
+
+mapodrate
+
+map_with_animation1 <- mapodrate +
+  # transition_time(Year) +
+  transition_manual(Year, cumulative = TRUE) +
+  ggtitle('Year: I DONT HAVE FRAME TIME VARIABLE',
+          subtitle = 'Frame IDK FRAME of MANY FRAMES MANY') +
+  ease_aes('linear')
+
+num_years1 <- max(cdcdeath1$Year) - min(cdcdeath1$Year) + 1
+num_years1
+animate(map_with_animation1,
+        renderer = gifski_renderer(),
+        nframes = 5)
+
+map_with_animation1
+
+
 
 
 #back to fancy line graphs---------------------------------
@@ -291,16 +388,7 @@ favstate=masterchart%>%
            state=='Virginia'|state=='Montana' | state=='West Virginia')
 favstate$Year=as.character(favstate$Year)
 favstate1=favstate%>%filter(Year<=2017)
-
-newggslopegraph(favstate1, Year, Overdose.Deaths, state,
-                Title = " Deaths by Opioids by State",
-                SubTitle = "Year 2013-2017",
-                Caption = "Percent of Total Deaths Attributed to Opioids or Narcotics",
-                DataLabelPadding = 0.2,
-                DataLabelLineSize = 0.5,
-                DataLabelFillColor = "lightblue",
-                ThemeChoice = "gdocs")
-
+#see gdp change for states----------------------------
 newggslopegraph(favstate1, Year, Percent_GDP, state,
                 Title = "Percent GDP by State",
                 SubTitle = "Year 2013-2017",
@@ -311,16 +399,48 @@ newggslopegraph(favstate1, Year, Percent_GDP, state,
                 DataLabelFillColor = "lightblue",
                 ThemeChoice = "gdocs")
 
+#trying to look at overdoses deaths---------------------
+favstate2=cdcdeaths%>%
+  filter(state=='Colorado' | state=='New York' | state=='Nevada' | state=='Wisconsin'|
+           state=='Virginia'|state=='Montana' | state=='West Virginia')
+favstate2$Year=as.character(favstate2$Year)
+favstate2=favstate2%>%filter(Year<=2019)
+
+newggslopegraph(favstate2, Year,Overdose.Deaths, state,
+                Title = "Deaths by Opioids by State",
+                SubTitle = "Year 2015-2019",
+                Caption = "Number of Total Deaths Attributed to Opioids or Narcotics",
+                DataLabelPadding = 0.2,
+                DataLabelLineSize = 0.5,
+                DataLabelFillColor = "lightblue",
+                ThemeChoice = "gdocs")
+
+
+#finding deaths as a percent of population
+
+favstate2$Percent_deaths=round(favstate2$Percent_deaths,3)
+newggslopegraph(favstate2, Year, Percent_deaths, state,
+                Title = "Percent of Deaths by Opioids to Population",
+                SubTitle = "Year 2015-2019",
+                Caption = "Percent of Total Deaths Attributed to Opioids or Narcotics by Population",
+                DataLabelPadding = 0.2,
+                DataLabelLineSize = 0.5,
+                DataLabelFillColor = "lightblue",
+                ThemeChoice = "gdocs")
+
+
+
 ##trying to find the avg rx rate each year
+
 avgrxrate=masterchart%>%group_by(Year)%>%summarise(Opioid_Prscrbng_Rate= mean(Opioid_Prscrbng_Rate))
 avgrxrate$Opioid_Prscrbng_Rate=round(avgrxrate$Opioid_Prscrbng_Rate,2)
 avgrxrate$State='National Avg'
-favstate2=favstate[,c("Year", "state", "Opioid_Prscrbng_Rate")]
+favstate3=favstate[,c("Year", "state", "Opioid_Prscrbng_Rate")]
+colnames(avgrxrate)[3] <- "state"
 
+newrx=rbind(avgrxrate,favstate3)
 
-newrx=rbind(avgrxrate,favstate2)
-
-newggslopegraph(newrx, Year, Opioid_Prscrbng_Rate, State,
+newggslopegraph(newrx, Year, Opioid_Prscrbng_Rate, state,
                 Title = "Opioid Prescribing Rate by State",
                 SubTitle = "Year 2013-2019",
                 Caption = "Percent of Medicaid Claims for Opioids",
@@ -329,3 +449,10 @@ newggslopegraph(newrx, Year, Opioid_Prscrbng_Rate, State,
                 DataTextSize = 1.5,
                 DataLabelFillColor = "lightblue",
                 ThemeChoice = "gdocs")
+
+
+
+#calculating stats
+favstate3=favstate3%>%group_by(state)%>%
+mutate(Percent_Change= ((Opioid_Prscrbng_Rate$Year==2019)-(Opioid_Prscrbng_Rate$Year==2013))/(Opioid_Prscrbng_Rate$Year==2013))
+
