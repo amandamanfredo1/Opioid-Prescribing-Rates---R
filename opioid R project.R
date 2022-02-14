@@ -351,9 +351,7 @@ animate(map_with_animation1,
         nframes = 5)
 
 map_with_animation1
-
-
-
+#i could not get it to work--yet
 
 #back to fancy line graphs---------------------------------
 library(CGPfunctions)
@@ -380,7 +378,7 @@ newggslopegraph(statesin10filt, Year, Percent_GDP, State,
                 DataLabelLineSize = 0.5,
                 DataLabelFillColor = "lightblue",
                 ThemeChoice = "gdocs")
-
+#still too busy----
 #states im focusing on--------------------------------------
 
 favstate=masterchart%>%
@@ -452,7 +450,67 @@ newggslopegraph(newrx, Year, Opioid_Prscrbng_Rate, state,
 
 
 
-#calculating stats
-favstate3=favstate3%>%group_by(state)%>%
-mutate(Percent_Change= ((Opioid_Prscrbng_Rate$Year==2019)-(Opioid_Prscrbng_Rate$Year==2013))/(Opioid_Prscrbng_Rate$Year==2013))
+#calculating stats for change in rx rate
 
+colorado2013=11.06
+colorado2019=5.54
+percentchangecolorado= ((colorado2019-colorado2013)/colorado2013)*100
+
+ny2013= favstate3%>%filter(state=='New York' & Year==2013)%>%select(Opioid_Prscrbng_Rate)
+ny2019=favstate3%>%filter(state=='New York' & Year==2019)%>%select(Opioid_Prscrbng_Rate)
+percentchangeny= ((ny2019-ny2013)/ny2013)*100
+percentchangeny
+
+westv2013= favstate3%>%filter(state=='West Virginia' & Year==2013)%>%select(Opioid_Prscrbng_Rate)
+westv2019=favstate3%>%filter(state=='West Virginia' & Year==2019)%>%select(Opioid_Prscrbng_Rate)
+percentchangewestv= ((westv2019-westv2013)/westv2013)*100
+percentchangewestv
+
+mont2013=favstate3%>%filter(state=='Montana' & Year==2013)%>%select(Opioid_Prscrbng_Rate)
+mont2019=favstate3%>%filter(state=='Montana' & Year==2019)%>%select(Opioid_Prscrbng_Rate)
+percentchangemont=((mont2019-mont2013)/mont2013)*100
+percentchangemont
+
+nev2013=favstate3%>%filter(state=='Nevada' & Year==2013)%>%select(Opioid_Prscrbng_Rate)
+nev2019=favstate3%>%filter(state=='Nevada' & Year==2019)%>%select(Opioid_Prscrbng_Rate)
+percentchnev=((nev2019-nev2013)/nev2013)*100
+percentchnev
+
+vir2013=favstate3%>%filter(state=='Virginia' & Year==2013)%>%select(Opioid_Prscrbng_Rate)
+vir2019=favstate3%>%filter(state=='Virginia' & Year==2019)%>%select(Opioid_Prscrbng_Rate)
+percentchangevir=((vir2019-vir2013)/vir2013)*100
+percentchangevir
+
+wis2013=favstate3%>%filter(state=='Wisconsin' & Year==2013)%>%select(Opioid_Prscrbng_Rate)
+wis2019=favstate3%>%filter(state=='Wisconsin' & Year==2019)%>%select(Opioid_Prscrbng_Rate)
+percentchangewis=((wis2019-wis2013)/wis2013)*100
+percentchangewis
+
+percentchange= rbind(percentchangecolorado, percentchangemont, percentchangeny, 
+                     percentchangevir, percentchangewestv, percentchangewis,
+                     percentchnev)
+percentchange
+percentchange$state=c('Colorado', 'Montana', 'New York', 'Virginia', 
+                 'West Virginia', 'Wisconsin', 'Nevada')
+percentchange=cbind(state,percentchange)
+
+percentchange <- percentchange %>%
+  rename(Change_Prescribing_Rate=Opioid_Prscrbng_Rate)
+percentchange
+
+#finding average deaths per year------------
+avgod=cdcdeath1%>%group_by(Year)%>%
+  summarise(Percent_deaths= mean(Percent_deaths))
+avgod$state='National Avg'
+favstate12=favstate2[,c("Year", "state", "Percent_deaths")]
+newod=rbind(avgod,favstate12)
+newod$Percent_deaths=round(newod$Percent_deaths,3)
+newggslopegraph(newod, Year, Percent_deaths, state,
+                Title = "Overdose Death Rate by State",
+                SubTitle = "Year 2015-2019",
+                Caption = "Percent of OVerdose Deaths by Population",
+                DataLabelPadding = 0.2,
+                DataLabelLineSize = 0.5,
+                DataTextSize = 1.5,
+                DataLabelFillColor = "lightblue",
+                ThemeChoice = "gdocs")
