@@ -35,12 +35,12 @@ ggplot(data=statemedicaid, aes(x=Year, y=Opioid_Prscrbng_Rate))+geom_point()
 topstate=statemedicaid%>%filter(Year=='2014')%>%arrange(desc(Opioid_Prscrbng_Rate))
 
 
-#clean up county data to find overdose deaths
-opioidcounty=opioidcounty%>%drop_na(Other,GDP.Education..Health..Social.Assistance)
-#get total opioid deaths per state per year 
-opioidcounty$GDP.Education..Health..Social.Assistance = as.numeric(opioidcounty$GDP.Education..Health..Social.Assistance)
-opioiddeaths=aggregate(cbind(GDP.Education..Health..Social.Assistance,GDP.Total,Population, Less_Than_HS) ~ State + Year, data = opioidcounty, sum, na.rm = TRUE)
-sapply(opioidcounty, class)
+# #clean up county data to find overdose deaths
+# opioidcounty=opioidcounty%>%drop_na(Other,GDP.Education..Health..Social.Assistance)
+# #get total opioid deaths per state per year 
+# opioidcounty$GDP.Education..Health..Social.Assistance = as.numeric(opioidcounty$GDP.Education..Health..Social.Assistance)
+# opioiddeaths=aggregate(cbind(GDP.Education..Health..Social.Assistance,GDP.Total,Population, Less_Than_HS) ~ State + Year, data = opioidcounty, sum, na.rm = TRUE)
+# sapply(opioidcounty, class)
 
 ##cleaning up cdc data--------------------------------
 cdcdeaths=cdcdeaths%>%filter(Indicator=='Number of Drug Overdose Deaths')
@@ -103,18 +103,18 @@ cdcdeaths=cdcdeaths%>%mutate(Percent_deaths=(Overdose.Deaths/Population)*100)
 #---------------------------------------------------
 
 #gonna attempt to join medicaid and opioiddeaths dataframes. wish me luck
-masterchart=left_join(statemedicaid,opioiddeaths, by=c('State','Year'))
-
+#masterchart=left_join(statemedicaid,opioiddeaths, by=c('State','Year'))
+masterchart=statemedicaid
 
 #woooohooo it worked
 colnames(masterchart)
 #5yrchange is mostly NA so gonna get rid of it
-masterchart=select(masterchart,-c(Opioid_Prscrbng_Rate_5Y_Chg,Other))
+#masterchart=select(masterchart,-c(Opioid_Prscrbng_Rate_5Y_Chg,Other))
 
 
 #create new columns gdp/gdptotal
-masterchart=masterchart%>%mutate(Percent_GDP=(GDP.Education..Health..Social.Assistance/GDP.Total)*100)
-masterchart$Percent_GDP=round(masterchart$Percent_GDP,3)
+# masterchart=masterchart%>%mutate(Percent_GDP=(GDP.Education..Health..Social.Assistance/GDP.Total)*100)
+# masterchart$Percent_GDP=round(masterchart$Percent_GDP,3)
 #top 10 states each year for opioid rx rates
 top2013=masterchart%>%filter(Year==2013)%>%
   arrange(desc(Opioid_Prscrbng_Rate))%>% slice(1:10)
@@ -306,7 +306,7 @@ cdcdeath1$Percent_deaths=as.numeric((cdcdeath1$Percent_deaths))
 
 mapodrate=plot_usmap(data = cdcdeath1, values = "Percent_deaths", color = "black") + 
   scale_fill_continuous(
-    low = "white", high = "red", name = "Overdose Deaths by Population", label = scales::comma, limits=c(.00,.05)
+    low = "white", high = "blue", name = "Overdose Deaths by Population", label = scales::comma, limits=c(.00,.06)
   ) + theme(legend.position = "right")
 
 map_with_animation1 <- mapodrate +
@@ -314,10 +314,10 @@ map_with_animation1 <- mapodrate +
   ggtitle('Year: {frame_time}',
           subtitle = 'Frame {frame} of {nframes}')
 num_years1 <- max(cdcdeath1$Year) - min(cdcdeath1$Year) + 1
-animate(map_with_animation1,renderer = gifski_renderer(), nframes = num_years1)
+animate(map_with_animation1,fps=1,renderer = gifski_renderer(), nframes = num_years1)
 
 anim_save("maprodrate.gif")
-##this didnt work either but it looks like a party in the USA so leaving it for fun
+##this didnt work  but it looks like a party in the USA so leaving it for fun
 library(tidyverse)
 library(usmap)
 library(gganimate)
