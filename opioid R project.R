@@ -380,22 +380,24 @@ newggslopegraph(statesin10filt, Year, Percent_GDP, State,
                 ThemeChoice = "gdocs")
 #still too busy----
 #states im focusing on--------------------------------------
-
+#
 favstate=masterchart%>%
-  filter(state=='Colorado' | state=='New York' | state=='Nevada' | state=='Wisconsin'|
-           state=='Virginia'|state=='Montana' | state=='West Virginia')
-favstate$Year=as.character(favstate$Year)
-favstate1=favstate%>%filter(Year<=2017)
-#see gdp change for states----------------------------
-newggslopegraph(favstate1, Year, Percent_GDP, state,
-                Title = "Percent GDP by State",
-                SubTitle = "Year 2013-2017",
-                Caption = "GDP Spent on healthcare, education, and social assistance",
-                DataLabelPadding = 0.2,
-                DataLabelLineSize = 0.5,
-                DataTextSize = 2.5,
-                DataLabelFillColor = "lightblue",
-                ThemeChoice = "gdocs")
+   filter(state=='Colorado' | state=='New York' | state=='Nevada' | state=='Wisconsin'|
+            state=='Virginia'|state=='Montana' | state=='West Virginia')
+ favstate$Year=as.character(favstate$Year)
+ favstate1=favstate%>%filter(Year<=2017)
+
+ # #see gdp change for states---not applicable anymore since not using that dataset
+ ---------------------------
+# newggslopegraph(favstate1, Year, Percent_GDP, state,
+#                 Title = "Percent GDP by State",
+#                 SubTitle = "Year 2013-2017",
+#                 Caption = "GDP Spent on healthcare, education, and social assistance",
+#                 DataLabelPadding = 0.2,
+#                 DataLabelLineSize = 0.5,
+#                 DataTextSize = 2.5,
+#                 DataLabelFillColor = "lightblue",
+#                 ThemeChoice = "gdocs")
 
 #trying to look at overdoses deaths---------------------
 favstate2=cdcdeaths%>%
@@ -514,3 +516,9 @@ newggslopegraph(newod, Year, Percent_deaths, state,
                 DataTextSize = 1.5,
                 DataLabelFillColor = "lightblue",
                 ThemeChoice = "gdocs")
+new=inner_join(cdcdeaths,masterchart, by="state","year")
+new=drop_na(new)
+cor(new$Percent_deaths,new$Opioid_Prscrbng_Rate)
+cor(new$Opioid_Prscrbng_Rate,new$Percent_deaths)
+
+ggplot(data=new, aes(x=Opioid_Prscrbng_Rate, y=Percent_deaths))+geom_point()
