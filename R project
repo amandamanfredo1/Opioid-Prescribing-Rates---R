@@ -1,2 +1,3 @@
 # Opioid-Prescribing-Rates---R
-Analysis of medicaid opioid prescribing rates by state and comparing to death rates by state to determine if a correlation exists
+According to a study done in 2013, 74% of recreational opioid users reported that they obtained their opioids from a doctor. This is why I wanted to see which states were prescribing the most opioids for their citizens to determine if there are trends that break down by state. I also wanted to analyze which states had the highest amount of overdose deaths in relation to state population, as well as the impact of measures put into effect.
+Finally, I wanted to see if there’s a relationship between prescribing rates and overdose deaths. I did this by using the Opioid Prescribing Rates dataset on Kaggle, which focused on Medicaid patients, with data from US Open Data Portal, data.gov. I also used the CDC website to obtain information on overdose deaths for each state and year. 
